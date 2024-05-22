@@ -1,0 +1,147 @@
+<aura:component controller="projectDetailsComponent" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="taskId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="taskDetails" type="Task_List__c"/>
+    <aura:attribute name="searchTerm" type="String" />
+    <aura:attribute name="searchResults" type="Object[]" />
+    <aura:attribute name="selectedTab" type="String" default="Task Details" />
+    <aura:attribute name="originalDescription" type="string" />
+    
+    <lightning:card class="slds-max-small slds-box-border" title="{!v.taskDetails.Name}" >
+        <aura:set attribute="actions">
+            <div class="slds-grid slds-gutters slds-p-around_small">
+                <div class="slds-col" style="width:260px;height:40px;">
+                    <lightning:input class="Search" placeholder="Global Search" value="{!v.searchTerm}" type="search"/>
+                </div> 
+                <div class="slds-col" style="margin-top:20px;">
+                    <lightning:button label="Search" variant="brand" onclick="{!c.searchRecords}"/>
+                </div>
+            </div>
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col">Record Object</th>
+                        <th scope="col">Record Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.searchResults}" var="result">
+                        <tr>
+                            <td><b>{!result.objectName}</b></td>
+                            <td><b>{!result.recordName}</b></td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+                
+            </table>
+        </aura:set>
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col" style="margin-left:25px;">
+                <c:Timer/>
+            </div>
+            <div class="slds-col">
+                <div class="search">
+                    <lightning:inputRichText variant="bottom-toolbar" class="searchRichText" value="{!v.originalDescription}" aura:id="originalscription" placeholder="create new Description"/>
+                </div>
+                <div class="buttonfetch">
+                    <lightning:button variant="neutral" type="submit" name="fetch" label="In Progress" onclick="{!c.TaskInProgDescTime}" />
+                    <lightning:button variant="neutral" type="submit" name="fetch" label="Task Done" onclick="{!c.TaskDoneDescTime}" />
+                    <lightning:button variant="neutral" type="submit" name="fetch" label="Hourly Update" onclick="{!c.hourlyTaskUpdate}" />
+                </div>
+            </div>
+        </div>   
+    </lightning:card>
+    <lightning:card class="slds-max-small slds-box-border" >
+        <div class="slds-card">
+            <div class="slds-card__body slds-grid">
+                <div class="slds-tabs-container slds-size_1-of-5">
+                    <div class="slds-tabs_default" style="height:100%; overflow-y: auto;">
+                        <div class="slds-tabs_default">
+                            <div class="slds-tabs_default__item" data-value="Task Details" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                <a class="slds-tabs_default__link">Task Details</a>
+                            </div>
+                            <div class="slds-tabs_default__item " data-value="Task Type" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                <a class="slds-tabs_default__link">Task Type</a>
+                            </div>
+                            <div class="slds-tabs_default__item" data-value="Task Metadata" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                <a class="slds-tabs_default__link">Task Metadata</a>
+                            </div>
+                            <div class="slds-tabs_default__item" data-value="Task Time" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                <a class="slds-tabs_default__link">Task Time</a>
+                            </div>
+                            <div class="slds-tabs_default__item" data-value="Client Contact" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                <a class="slds-tabs_default__link">Client Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-border_left slds-p-around_medium slds-size_4-of-5">
+                    <div>
+                        <lightning:recordEditForm objectApiName="Task_List__c" 
+                                                  recordId="{!v.taskDetails.Id}"
+                                                  onsuccess="{!c.handleSuccess}" >   
+                            <lightning:messages />
+                            <aura:if isTrue="{!v.selectedTab == 'Task Details'}">
+                                <lightning:inputField fieldName="Name" value="{!v.taskDetails.Name}" />
+                                <lightning:inputField fieldName="Milestone__c" value="{!v.taskDetails.Milestone__c}" />
+                                <lightning:inputField fieldName="Project__c" value="{!v.taskDetails.Project__c}" />
+                                <lightning:inputField fieldName="Description__c" value="{!v.taskDetails.Description__c}" />
+                            </aura:if>
+                            <aura:if isTrue="{!v.selectedTab == 'Task Type'}">
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col">
+                                        <lightning:inputField fieldName="Task_Type__c" value="{!v.taskDetails.Task_Type__c}" />
+                                        <lightning:inputField fieldName="MetaData_Type__c" value="{!v.taskDetails.MetaData_Type__c}" />
+                                        <lightning:inputField fieldName="MetaData_Name__c" value="{!v.taskDetails.MetaData_Name__c}" />
+                                        <lightning:inputField fieldName="Object_API_Name__c" value="{!v.taskDetails.Object_API_Name__c}" />
+                                        <lightning:inputField fieldName="In_Scope__c" value="{!v.taskDetails.In_Scope__c}" />
+                                    </div>
+                                    <div class="slds-col">
+                                        <lightning:inputField fieldName="Est_Mints_Dev__c" value="{!v.taskDetails.Est_Mints_Dev__c}" />
+                                        <lightning:inputField fieldName="Assigned_By__c" value="{!v.taskDetails.Assigned_By__c}" />
+                                        <lightning:inputField fieldName="Incurred_By__c" value="{!v.taskDetails.Incurred_By__c}" />
+                                        <lightning:inputField fieldName="Status__c" value="{!v.taskDetails.Status__c}" />
+                                        <lightning:inputField fieldName="Client_Confirmation_Required__c" value="{!v.taskDetails.Client_Confirmation_Required__c}" />
+                                    </div>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!v.selectedTab == 'Task Metadata'}">
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col">
+                                        <lightning:inputField fieldName="MetaData_Type__c" value="{!v.taskDetails.MetaData_Type__c}" />
+                                        <lightning:inputField fieldName="MetaData_Name__c" value="{!v.taskDetails.MetaData_Name__c}" />
+                                        <lightning:inputField fieldName="Object_API_Name__c" value="{!v.taskDetails.Object_API_Name__c}" />
+                                        <lightning:inputField fieldName="Can_We_Email_Description_To_Client__c" value="{!v.taskDetails.Can_We_Email_Description_To_Client__c}" />
+                                    </div>
+                                    <div class="slds-col">
+                                        <lightning:inputField fieldName="Test_Class_Required__c" value="{!v.taskDetails.Test_Class_Required__c}" />
+                                        <lightning:inputField fieldName="Test_Class_Completed__c" value="{!v.taskDetails.Test_Class_Completed__c}" />
+                                        <lightning:inputField fieldName="Email_Sent_to_client__c" value="{!v.taskDetails.Email_Sent_to_client__c}" />
+                                        <lightning:inputField fieldName="Task_Done_in_Sandbox_Or_Production__c" value="{!v.taskDetails.Task_Done_in_Sandbox_Or_Production__c}" />
+                                    </div>
+                                </div>
+                            </aura:if>
+                            <aura:if isTrue="{!v.selectedTab == 'Task Time'}">
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col">
+                                        <lightning:inputField fieldName="Committed_End_Date_Time__c" value="{!v.taskDetails.Committed_End_Date_Time__c}" />
+                                        <lightning:inputField fieldName="Rev_End_Date_Time__c" value="{!v.taskDetails.Rev_End_Date_Time__c}" />
+                                        <lightning:inputField fieldName="Time_Count__c" value="{!v.taskDetails.Time_Count__c}" />
+                                    </div>
+                                    <div class="slds-col">
+                                        <lightning:inputField fieldName="Start_Date_Time__c" value="{!v.taskDetails.Test_Class_Required__c}" />
+                                        <lightning:inputField fieldName="End_Date_Time__c" value="{!v.taskDetails.Test_Class_Completed__c}" />
+                                        <lightning:inputField fieldName="Mints_Invested__c" value="{!v.taskDetails.Email_Sent_to_client__c}" />
+                                    </div>
+                                </div>
+                            </aura:if>
+                            <lightning:button class="slds-m-top_small" variant="brand" type="submit" name="update" label="Update" />
+                        </lightning:recordEditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </lightning:card>
+</aura:component>

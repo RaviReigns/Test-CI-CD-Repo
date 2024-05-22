@@ -1,0 +1,48 @@
+<aura:component controller="DragAndDropComponentHandler" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:attribute name="CaseWrapper" type="DragAndDropComponentHandler.CaseWrapper"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="searchText" type="String" default="" />
+    <aura:attribute name="selectedStatus" type="String" default="" />
+    <aura:attribute name="options" type="List" default="[{'label': 'Planned', 'value': 'Planned'}, {'label': 'In Progress', 'value': 'In Progress'}, {'label': 'Paused', 'value': 'Paused'}, {'label': 'Completed', 'value': 'Completed'}]" />
+    
+    <div class="c-container">
+        <lightning:layout >
+            <lightning:layoutItem size="4" padding="around-small">
+                <div class="slds-box" ondrop="{!c.onNewDrop}" ondragover="{!c.allowDrop}">
+                    <h1 style="font-size:30px; text-align: center"><b>Planned</b></h1><br/>
+                    <aura:iteration items="{!v.CaseWrapper.newtask}" var="newtask1">
+                        <div class="slds-box" draggable="true" ondragstart="{!c.dragStart}" data-id="{!newtask1.Id}">
+                            <lightning:icon iconName="standard:case_change_status" alternative-Text="Task Status" title="Task Status" />
+                            <b> Task Name</b>: {!newtask1.Name}<br/>
+                            <b>Status</b>: {!newtask1.Status__c}<br/>
+                        </div>
+                    </aura:iteration>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutitem size="4" padding="around-small">
+                <div class="slds-box" ondrop="{!c.onProgressDrop}" ondragover="{!c.allowDrop}">
+                    <h1 style="font-size:30px; text-align: center"><b>In Progress</b></h1><br/>
+                    <aura:iteration items="{!v.CaseWrapper.workingTasks}" var="workingTask">
+                        <div class="slds-box" draggable="true" ondragstart="{!c.dragStart}" data-id="{!workingTask.Id}">
+                            <lightning:icon iconName="standard:case_change_status" alternative-Text="Task Status" title="Task Status" />
+                            <b> Task Name</b>: {!workingTask.Name}<br/>
+                            <b>Status</b>: {!workingTask.Status__c}<br/>
+                        </div>
+                    </aura:iteration>
+                </div>
+            </lightning:layoutitem>
+            <lightning:layoutItem size="4" padding="around-small">
+                <div class="slds-box" ondrop="{!c.onClosedDrop}" ondragover="{!c.allowDrop}">
+                    <h1 style="font-size:30px; text-align: center"><b>Closed</b></h1><br/>
+                    <aura:iteration items="{!v.CaseWrapper.closedTasks}" var="closedTask">
+                        <div class="slds-box" draggable="true" ondragstart="{!c.dragStart}" data-id="{!closedTask.Id}">
+                            <lightning:icon iconName="standard:case_change_status" alternative-Text="Task Status" title="Task Status" />
+                            <b> Task Name</b>: {!closedTask.Name}<br/>
+                            <b>Status</b>: {!closedTask.Status__c}<br/>
+                        </div>
+                    </aura:iteration>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

@@ -1,0 +1,122 @@
+<aura:component controller="HIC_AddOppLineItemsController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName,force:lightningQuickActionWithoutHeader" access="global" >
+    
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="quoteId" type="string" />
+    <aura:attribute name="sObjectName" type="String" />
+    <aura:attribute name="QuoteItemList" type="object[]"/>
+     <aura:attribute name="pricebookId" type="string" default=""/>
+    <aura:attribute name="Products" type="Product2[]" default="[]" />
+    <aura:attribute name="matchproducts" type="Product2[]" default="[]"/>
+    <aura:attribute name="searchText" type="string" default=""/>
+    
+    <aura:handler name="change" value="{!v.searchText}" action="{!c.searchText}"></aura:handler> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    
+    
+    <aura:html tag="style">
+        .slds-p-around–medium {
+        padding: 0rem !important;
+        }
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+    </aura:html>
+    
+    <div class="modal-header slds-modal__header slds-size_1-of-1">
+        
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"> Create New Product</h2>
+        
+    </div>
+    
+    <div class="slds-modal__content">
+        
+        <table > 
+            <tbody>      
+                <aura:iteration items="{!v.QuoteItemList}" var="qt" indexVar="index">
+                    <tr>
+                        <td> 
+                            <lightning:card title="{!index+1+(')')}" class="slds-p-left_xx-small groove">
+                                <div class="slds-grid slds-wrap slds-grid_pull-padded-x-small">
+                                    <div class="slds-size_1-of-5 slds-p-horizontal_small">
+                                         <aura:if isTrue="{!qt.Name}">
+                                                      <lightning:input value="{!qt.Name}" aura:id="enter-search" name="enter-search" label="Product Name" type="search" disabled="true"/><br/>
+                                         <aura:set attribute="else">
+                                        
+                                        <ul class="slds-lookup__list" role="listbox">
+                                           
+      											<lightning:input value="{!v.searchText}" aura:id="enter-search" name="enter-search" label="Product Name" type="search"/><br/>
+   											
+                                            <aura:if isTrue="{!v.matchproducts}">
+                                                <div class="{!if(not(empty(v.matchproducts)), 'result-buttom','')}">
+                                                    <aura:iteration items="{!v.matchproducts}" var="item">
+                                                        <li role="presentation">
+                                                            <span class="slds-lookup__item-action slds-media slds-media--center" role="option">
+                                                                <div class="slds-media__body">
+                                                                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                        <div class="slds-lookup__result-text" data-record="{!index}" data-name="{!item.productName}" data-id="{!item.Product2Id}" onclick="{!c.update }">
+                                                                            <a role="option" >
+                                                                                <lightning:icon iconName="standard:product" size="xx-small"/>&nbsp;{!item.productName}
+                                                                            </a>
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </li>
+                                                    </aura:iteration>
+                                                </div>
+                                            </aura:if>
+                                      
+                                             </ul>
+                                             </aura:set>
+                                        </aura:if>
+                                    </div>
+                                
+                                    <div class="slds-size_1-of-5 slds-p-horizontal_small" data-record="{!index}">
+                                        <lightning:input name="prodQty" type="number"  label="Quantity" value="{!qt.Quantity}" /> 
+                                    </div>
+                                    
+                                    <div class="slds-size_1-of-5 slds-p-horizontal_small" data-record="{!index}">
+                                        <lightning:input name="prodPrice" type="number" formatter="currency" step="0.01" label="Price" value="{!qt.UnitPrice}" />
+                                    </div>
+                                    <div class="slds-size_1-of-5 slds-p-horizontal_small" data-record="{!index}">
+                                        <lightning:input name="TotalPrice" type="number" formatter="currency" step="0.01" label="Total Price" value="{!(qt.UnitPrice*qt.Quantity)}" />
+                                    </div>
+                                     <div class="slds-size_1-of-5 slds-p-horizontal_small" onkeyup="{!c.updateDate}">
+                                        <lightning:input name="total" type="date" label="Service Date" value="{!qt.ServiceDate}" />
+                                    </div> 
+                                </div>
+                                <aura:set attribute="actions" >
+                                    <a onclick="{!c.removeRow}" data-record="{!index}">
+                                        <lightning:buttonIcon iconName="utility:delete" iconClass="red"  size="x-large" variant="destructive" alternativeText="Delete" />
+                                    </a>
+                                    <lightning:buttonIcon iconName="utility:add" iconClass="green"  size="x-large" variant="success" alternativeText="Add" onclick="{!c.addRow}"/>
+                                    
+                                </aura:set>
+                            </lightning:card>
+                        </td>
+                    </tr>
+                </aura:iteration>
+            </tbody>
+        </table>
+        
+    </div>
+    
+    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+        
+        <div class="slds-align_absolute-center slds-p-top_small ">
+            <lightning:button variant="brand" label="Cancel" title="Brand action" onclick="{!c.quoteCancel}" />
+            <lightning:button  variant="brand" label="Save" title="Brand action" onclick="{!c.quoteSave}" />
+        </div>
+        
+    </div>
+    
+    
+    
+</aura:component>

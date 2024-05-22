@@ -1,0 +1,35 @@
+<aura:component controller="PostalCodeIntegration" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="postalLocList" type="List" />
+    <aura:attribute name="searchPincode" type="String" />
+    
+    <lightning:card class="custom-card">
+        <div class="c-container" >
+            <lightning:layout verticalAlign="center" class="x-large">
+                <lightning:layoutItem flexibility="auto,grow" padding="around-small">
+                    <div style="width:60%;margin-left:auto;margin-right:auto;">      
+                        <lightning:input  placeholder="Search Pincode" value="{!v.searchPincode}" type="search" />
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+         <aura:set attribute="actions">
+            <lightning:button onclick="{!c.getPostalLocData}" variant="brand" label="Go"/>
+        </aura:set>
+        <aura:iteration items="{!v.postalLocList}" var="pos">
+            <div class="tube-cell">
+                <b class="card-text">{!pos.Name},</b>
+                <b class="card-text">{!pos.BranchType},</b>	 
+                <b class="card-text">{!pos.DeliveryStatus},</b>
+                <b class="card-text">{!pos.Circle},</b>
+                <b class="card-text">{!pos.District},</b>
+                <b class="card-text">{!pos.Division},</b>
+                <b class="card-text">{!pos.Region},</b>
+                <b class="card-text">{!pos.Block},</b>
+                <b class="card-text">{!pos.State},</b>
+                <b class="card-text">{!pos.Country},</b>
+                <b class="card-text">{!pos.Pincode}.</b>
+            </div>
+        </aura:iteration>
+    </lightning:card>
+</aura:component>

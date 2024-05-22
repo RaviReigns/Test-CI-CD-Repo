@@ -1,0 +1,350 @@
+<!--
+* @author [RAVI REDDY]
+* @Created Date [25-02-2023] [12:02 PM]
+* @description [Create Base-Line VFpage of Quotation pdf which later be changed with dynamic values]
+* @LastModified Date [06-03-2023] [03:45 PM]extensions="createQuotePdf" font-family: 'Times New Roman', serif;
+*/ -->
+
+<apex:page standardController="Quote" renderAs="pdf" sidebar="false" 
+           standardStylesheets="false"  applyHtmlTag="false" showHeader="false" applyBodyTag="false">
+    
+    <apex:variable var="pageNumber" value="1" />
+    
+    <head>
+        <style type="text/css" media="print">
+            @page
+            { 
+            width:100%;  
+            position: absolute;
+            top: 0;
+            page-break-after:always; 
+            page-break-after:auto;
+            margin-top: 190px;
+            margin-bottom: 160px;   <!-- Showing Full Footer -->
+            padding-top: 0px;
+            <!--    
+margin-top: 65px;
+padding-top: 100px;
+-->
+            background-repeat: no-repeat;
+            font-family: Trebuchet MS, Sans-serif;
+            background-position:center;
+            font-size:9px;
+            
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+            
+            size:portrait;
+            
+            <!--
+@top-center {                   
+content: element(header);               
+}
+-->
+            @top-right {
+            content: element(header); 
+            }
+            @bottom-right {
+            content: element(footer_pagenumber);             
+            }
+            
+            @bottom-center {
+            content: element(footer);
+            }           
+            
+            @bottom{
+            content: element(footer);
+            }            
+            
+            
+            }
+            
+            @page:first { 
+            <!-- @top-right {content: normal;} -->
+            <!-- border: 1px solid green;   -->
+            margin-top : 90px;
+            }
+            
+            
+            body { 
+            font-family: Trebuchet MS, Sans-serif; 
+            font-size:9px;
+            }
+            
+            .customImage{
+            height: 10px !important; 
+            width:10px !important;
+            }
+            
+            .otherDivs{
+            margin-right:10px;
+            margin-left:15px;
+            margin-top:15px;
+            font-size:12px;
+            }
+            
+            div.header {
+            position: running(header);
+            border: 1px solid white;
+            
+            }
+            div.header2 {
+            position: running(header);
+            border: 1px solid orange;
+            background-color: orange;
+            height: 40px;
+            }
+            
+            table {-fs-table-paginate: paginate;
+            }
+            tr    { page-break-inside:avoid; page-break-after:auto }
+            td    { page-break-inside:avoid; page-break-after:auto }
+            thead{display: table-header-group;}
+            
+            <!--
+div.footer {
+display:block;
+padding: 5px;
+position: running(footer);
+vertical-align:bottom;
+}  
+div.footerLarge {
+@page {margin: 1.25in .25in 1.25in .25in}
+}
+
+
+-->         
+            div.footer {
+            display:block;
+            padding: 5px;
+            position: running(footer);
+            vertical-align:bottom;
+            }
+            
+            .pagenumber:before {
+            content: counter(page);
+            }
+            .pagecount:before {
+            content: counter(pages);
+            }
+            
+            <!-- /// css code -->
+            .c_table{
+            -fs-table-paginate: paginate;
+            border-spacing: 0;
+            table-layout:fixed
+            }
+            
+            
+        </style>        
+    </head> 
+    
+    <body style="margin:0px; padding:10px; padding-top:0px; ">
+        
+        <div class="header" style="width:100%; margin-top:10px;">
+            <table style="width:100%;border-bottom:1.5px solid black;">
+                <tr>
+                    <td style="width:100%;">
+                        <div style="margin-left:28px;">
+                            <b style="font-size:19px;">STARBIGBLOC BUILDING MATERIAL PRIVATE LIMITED</b>
+                            <br/> 
+                            <div style="width:100%;font-size:17px;">
+                                (Fully Owned Subsidary of Bigbloc Construction Limited) 
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width:100%">
+                        <apex:image url="{!$Resource.MohitLogo}" style="height:110px;width:140px;float:right;margin-top:2px;" />                      
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="font-size:15px;margin-top:52px;margin-bottom:7px;text-align:right;">Date:25-02-2023</div>
+        
+        
+        
+        
+        <!-- ######################################### Header ########################################## -->
+        <div class="header" style="width:100%; margin-top:10px;">
+            <table style="width:100%;border-bottom:1.5px solid black;">
+                <tr>
+                    <td style="width:100%;">
+                        <div style="margin-left:28px;">
+                            <b style="font-size:19px;">STARBIGBLOC BUILDING MATERIAL PRIVATE LIMITED</b>
+                            <br/> 
+                            <div style="width:100%;font-size:17px;margin-bottom:7px;">
+                                (Fully Owned Subsidary of Bigbloc Construction Limited) 
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width:100%">
+                        <apex:image url="{!$Resource.MohitLogo}" style="height:90px;width:130px;float:right;margin-top:-75px;" />                      
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        
+        
+        <!-- ######################################### Footer ########################################## -->
+        
+        <div class="footer" style="margin:0px; padding:0px; font-size:8px; ">
+            
+            <!-- For Page Numbers -->
+            <div style="text-align:right">Page <span class="pagenumber"/> / <span class="pagecount"/></div>
+            
+            <!-- For Horizontal Line -->
+            <hr style="height:0.8px;border:none;color:black;background-color:black;"/>
+            
+            <!-- For All Details -->
+            <table style="width:100%; text-align:center;">
+                <tr>
+                    <td > CIN NO: U26950Gj2012PTC070354<br/></td>
+                </tr>
+                <tr>
+                    <td>Regd.Off: A-601/B, International Trade Center,Mujura Gate Crossing, Ring Road,Surat-395001, Gujarat.</td>
+                </tr>
+                <tr>
+                    <td >Phone: +91 261-2463261,2463262,2463263, Fax: +91 261-2463264, Email: mohitsaboo19@gmail.com</td>
+                </tr>     
+            </table>
+            
+            
+        </div>
+        
+        <!--########################################## Product Info Section ############################################-->
+        <br/> <br/>
+        
+        <div style="font-size:12px; padding-left:5px;">
+            <div style="text-size:14px;margin-top:-18px;">To, <br/>{!Quote.Name}<br/>{!Quote.Account.Name}</div>
+            <div style="font-size:14px;margin-top:8px;text-align:center;text-decoration:underline;"><b>Sub: Quotation of AAC Block from NXTBLOC</b></div>
+            <div style="font-size:14px;margin-top:15px;">Dear Sir,</div>
+            <div style="font-size:14px;margin-top: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;<b>Starbigbloc Building Material Private Limited</b> is a subsidiary of <b>Bigbloc Construction Limited</b> and leading manufacturer and supplier of AAC Blocks. Bigbloc Construction Limited is a professionally managed company listed on<b> NSE &amp; BSE.</b> We manufacture both Sand and Fly-ash based AAC blocks under the brand name of <b>NXTBLOC</b> and Block Jointing Mortar under<b> NXTFIX.</b></div>
+            <div style="font-size:14px;margin-top: 10px;">&nbsp;&nbsp;&nbsp;&nbsp; We have Head Office at Surat and Branch Offices at Ahmedabad and Mumbai. Currently we have two manufacturing units that is one at Kapadwanj, near Ahmedabad city and other is at Umargam of Valsad district in Gujarat state. Our current total production capacity is 5.50 lakh cubic meter per year.</div>
+            <p style="font-size:14px;margin-top: 10px;margin-top: 10px;"> &nbsp;&nbsp;&nbsp;&nbsp; NXTBLOC are manufactured as per the instruction provided by <b>IS code 2185 part III.</b> NXTBLOC are a high-quality building material that offers a unique combination of strength, low weight, thermal insulation, sound absorption, unsurpassed fire resistance and unprecedented build ability. We have the approval sanctioned by the ISI authority.</p>
+            
+            <br/><br/>
+            
+            
+            <!----------------------------------------------------Header Datatable-------------------------------------------------------------------------------------------------->
+            <!----------------------------------------------------Body Datatable---------------------------------------------------------------------------------------------------->
+            
+            <!--------------------------   table wih discount value    -------------------------------->
+            
+            <table style="margin-top:20px;margin-left:6px;width:100%;table-layout:fixed;border-collapse: collapse;" cellspacing="0" cellpadding="0">
+                
+                <thead style="font-size: 14px;">
+                    <tr style="border: 1px solid black;">
+                        <th style="border: 1px solid black;text-align:center;">Sr. No.</th>
+                        <th style="border: 1px solid black;text-align:center;">Description</th>
+                        <th style="border: 1px solid black;text-align:center;">Unit</th>
+                        <th style="border: 1px solid black;text-align:center;">Advance Term Rate</th>
+                        <th style="border: 1px solid black;text-align:center;">30 Days Credit Rate</th>
+                        <th style="border: 1px solid black;text-align:center;">GST</th>
+                    </tr>
+                </thead>
+                
+                
+                
+                <!---------------- product details------------->
+                <tbody style="margin-top:5px;margin-left:20px;" > 
+                    <apex:variable value="{!0}" var="counter"/>
+                    <apex:repeat value="{!Quote.QuoteLineItems}" var="Qlitem">
+                        <tr style="border: 1px solid black;font-size: 14px;">
+                            <td style="border: 1px solid black;text-align:center;">{!counter + 1}</td>
+                            <td style="border: 1px solid black;">{!Qlitem.Product2.Name}</td>
+                            <td style="border: 1px solid black;text-align:center;">{!Qlitem.Product2.Name}</td>
+                            
+                            <td style="border: 1px solid black;text-align:center;">{!Qlitem.Product2.Name}%</td>
+                            <apex:variable value="{!counter + 1}" var="counter"/>
+                        </tr>
+                    </apex:repeat>
+                </tbody>
+                
+            </table>
+            
+            
+            <!--  ###################################### Terms & Conditions Section ########################### -->
+            
+            <div>
+                
+                <table>
+                    <th>
+                        <b><u>Terms &amp; Conditions:</u></b>
+                    </th>
+                    
+                    
+                    <tr>
+                        <td style="width:120px;">Taxes:</td>
+                        <td> : {!Quote.Name}. </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="width:120px;">GST:</td>
+                        <td>{!Quote.Name}. </td>
+                    </tr> 
+                    <tr>
+                        <td style="width:120px;">Payment Terms:</td>
+                        <td> : {!Quote.Name}.  </td>
+                    </tr>                    
+                    
+                    <tr>
+                        <td style="width:100px;">Rate: </td>
+                        <td>:{!Quote.Name}. </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="width:120px;">Breakage :</td>
+                        <td> : {!Quote.Name}. </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="width:120px;">Chipping</td>
+                        <td>{!Quote.Name}.</td>
+                    </tr>
+                    <tr>
+                        <td style="width:120px;">Delivery</td>
+                        <td>{!Quote.Name}.</td>
+                    </tr>
+                    <tr>
+                        <td style="width:120px;">Above rates are applicable for site:</td>
+                        <td>{!Quote.Name}.</td>
+                    </tr>
+                    
+                </table> 
+            </div>
+            <br/><br/>
+            
+            <div style=" line-height: 1.6;  " > <!-- text-align:justify; width:500px; -->
+                
+                <apex:dataTable value="{!Quote }" var="ord" columns="1" width="100%" columnsWidth=""  
+                                style="border-collapse: collapse;table-layout: fixed;">
+                    
+                    <apex:column style="text-align:justify; font-size:12px; height:20px">
+                        We would like to request you that if you see any scope of synergy to be associated with your esteem 
+                        organization, it would be highly appreciated
+                        
+                    </apex:column>   
+                    
+                </apex:dataTable>
+                
+                <p style="text-align:justify; width:100%; font-size:12px;">
+                    We are looking forward to work with you
+                </p>
+                
+            </div>
+            
+            <div style=" line-height: 1.6; text-align:left; " > <!-- text-align:justify; width:500px; -->
+                
+                
+                <div class="letterhead">Shailendra Varatiya<br/><b style="font-size:12px;">STARBIGBLOC BUILDING MATERIAL PRIVATE LIMITED.</b><br/>www.nxtbloc.in<br/>(M) +91 9825060530<br/>shailendra.varatiya@nxtbloc.in</div>
+                
+                
+            </div>
+            
+        </div>
+        
+    </body>
+    
+</apex:page>

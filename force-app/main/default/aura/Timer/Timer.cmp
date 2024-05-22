@@ -1,0 +1,36 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:handler name="init" value="{!this }" action="{!c.doInit}"/>
+    <aura:attribute name="ltngHour" type="Integer" default="00" />
+    <aura:attribute name="ltngMinute" type="Integer" default="00"/>
+    <aura:attribute name="ltngSecond" type="Integer" default="00"/>
+    <aura:attribute name="ltngTimmer" type="Integer" default="00:00:00" />
+    <aura:attribute name="ltngIsDisplayed" type="boolean" default="false"/> 
+    
+    <lightning:card class="timer-card">
+        <div class="header" >TIMER</div>
+        <div class="slds-grid slds-wrap" >
+            <div class="slds-col slds-size_1-of-3 slds-text-align_center timer-section">
+                <p style="font-size: 15px; color: black;">Hour</p>
+                <lightning:input value="{!v.ltngHour}" label="" name="hh" placeholder="hh" type="number" maxlength="2" min="0" max="60" />
+            </div>
+            <div class="slds-col slds-size_1-of-3 slds-text-align_center timer-section">
+                <p style="font-size: 15px; color: black;">Minute</p>
+                <lightning:input value="{!v.ltngMinute}" label="" name="mm" placeholder="mm" type="number" maxlength="2" min="0" max="60" />
+            </div>
+            <div class="slds-col slds-size_1-of-3 slds-text-align_center timer-section">
+                <p style="font-size: 15px; color: black;">Second</p>
+                <lightning:input value="{!v.ltngSecond}" label="" name="ss" placeholder="ss" type="number" maxlength="2" min="0" max="60" />
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-align_absolute-center timer-section" >
+                <span class="timer-bubble">{!v.ltngTimmer}</span>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-align_absolute-center timer-section">
+                <lightning:button variant="success" label="Start" onclick="{! c.handleStartClick }" disabled="{!v.ltngIsDisplayed}"/>
+                <lightning:button variant="destructive" label="Stop" onclick="{! c.handleStopClick }" disabled="{! !v.ltngIsDisplayed}"/>
+                <lightning:button variant="brand" label="Reset" onclick="{! c.handleResetClick }" />
+            </div>
+        </div>
+    </lightning:card>
+    
+</aura:component>

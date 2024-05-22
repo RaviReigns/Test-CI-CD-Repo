@@ -1,0 +1,36 @@
+<aura:component >
+    <aura:attribute name="day" type="String"/>
+    <aura:attribute name="visible" type="Boolean" default="true"/>
+    <aura:attribute name="toDoItems" type="String[]"/>
+    
+    <td class = "outline" scope="col" >
+       <aura:if isTrue="{!v.visible}">  
+        <fieldset class="slds-box slds-theme--default ">
+           
+            
+            
+    <table class="subtable" style="vertical-align:top">
+  		<thead>
+   			 <tr >
+
+                    <th   class="thClass"> {!v.day} </th>
+
+            </tr>
+        </thead>
+        <tbody>
+        	<aura:iteration items="{!v.toDoItems}" var="item">
+           		<tr><td >{!item} </td></tr>
+               </aura:iteration>
+            
+
+        
+        </tbody>
+    </table>
+ 
+
+            
+        </fieldset>
+           </aura:if>
+        </td>
+	
+</aura:component>

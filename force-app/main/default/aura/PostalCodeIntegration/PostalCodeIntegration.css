@@ -1,0 +1,26 @@
+.THIS .custom-card {
+    height: 45px;
+    border-radius: 10px;
+    border: 2px black;
+    margin-bottom: 2px;
+    display: block;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transform: translateZ(10px);
+    background: linear-gradient(135deg, white, #F5FFFA, #FFFAFA, #FFFFF0);
+}
+
+.THIS .tube-cell {
+    border: 1px solid #ccc;
+    border-radius: 35px;
+    padding: 8px;
+    width:70%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.THIS .card-text {
+    display: inline-block;
+    text-align: center;
+}

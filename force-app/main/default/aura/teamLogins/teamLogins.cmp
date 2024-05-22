@@ -1,0 +1,155 @@
+<aura:component controller="teamLogins" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:attribute name="teams" type="Team__c[]"/>
+    <aura:attribute name="projects" type="Project1__c[]"/>
+    <aura:attribute name="teamMemberId" type="String"/>
+    
+    <aura:attribute name="AllExisting" type="Integer" />
+    <aura:attribute name="TodayExisting" type="Task_List__c" />
+    <aura:attribute name="AllDone" type="Task_List__c" />
+    <aura:attribute name="TodayDone" type="Task_List__c" />
+    
+    <aura:attribute name="projectGoBack" type="Boolean" default="false" />
+    <aura:attribute name="loginFormVisible" type="Boolean" default="false" />
+    <aura:attribute name="recordFormVisible" type="Boolean" default="true" />
+    <aura:attribute name="projectFormVisible" type="Boolean" default="false" />
+    
+    <aura:attribute name="Username" type="String"/>
+    <aura:attribute name="Password" type="String"/>  
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="searchText" type="string" default=""/>
+    
+    <div>
+        <lightning:card class="search">
+            <lightning:input class="input" value="{!v.searchText}" onchange="{!c.searchText}" name="Search Team Member" type="search"/>
+            <aura:set attribute="actions">
+                <aura:if isTrue="{!v.projectGoBack}">
+                    <div style=" position: absolute;top: 50%;transform: translateY(-50%);right: 10px;">
+                        <lightning:buttonIcon iconName="utility:arrow_left" onclick="{!c.goBack}" variant="border-filled" alternativeText="Show More"/>
+                    </div>
+                </aura:if>
+            </aura:set>
+        </lightning:card>
+        
+        <aura:if isTrue="{!v.recordFormVisible}">
+            <div class="slds-grid slds-wrap">
+                <aura:iteration items="{!v.teams}" var="item">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning:card class="teamcard">
+                            <h2 style="margin-left: 20px;"><b>{!item.Name} -{!item.Availability__c} - AVAILABLE</b></h2>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-3" data-value="{!item.Id}" onclick="{!c.teamDetail}">
+                                    <lightning:formattedRichText value="{!item.Pic__c}" class="teampic" />
+                                    <div class="slds-card__body">
+                                        <p><b>Username : </b>{!item.Username__c}</p>
+                                        <p><b>Password : </b>{!item.Password__c}</p>
+                                        <p><b>Mobile : </b>{!item.Mobile__c}</p>
+                                        <p><b>Availability : </b>{!item.Availability__c}</p>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <div class="slds-col">
+                                        <div class="slds-button slds-button_neutral slds-text-heading_small" onclick="{!c.showRecs}">
+                                            <span class="slds-truncate"><lightning:icon iconName="standard:work_plan_template" alternativeText="Approved" title="Approved" size="small"/>
+                                                All Existing</span>
+                                            <span class="cart">{!v.AllExisting}</span>
+                                        </div>
+                                        <div class="slds-button slds-button_neutral slds-text-heading_small" onclick="{!c.showRecs}">
+                                            <span class="slds-truncate"><lightning:icon iconName="standard:snippet_alt" alternativeText="Approved" title="Approved" size="small"/>
+                                                Today Existing</span>
+                                            <span class="cart">{!v.TodayExisting}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <div class="slds-col">
+                                        <div class="slds-button slds-button_neutral slds-text-heading_small" onclick="{!c.showRecs}">
+                                            <span class="slds-truncate"><lightning:icon iconName="standard:work_plan_template_entry" alternativeText="Approved" title="Approved" size="small"/>
+                                                All Done</span>
+                                            <span class="cart">{!v.AllDone}</span>
+                                        </div>
+                                        <div class="slds-button slds-button_neutral slds-text-heading_small" onclick="{!c.showRecs}">
+                                            <span class="slds-truncate"><lightning:icon iconName="standard:asset_audit" alternativeText="Approved" title="Approved" size="small"/>
+                                                Today Done</span>
+                                            <span class="cart">{!v.TodayDone}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </lightning:card>
+                    </div>
+                </aura:iteration>
+            </div>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.projectFormVisible}">
+            <div class="slds-grid slds-wrap">
+                <aura:iteration items="{!v.projects}" var="item">
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning:card class="projectcard"> 
+                            <div class="slds-grid slds-wrap"> 
+                                <div class="slds-col slds-size_1-of-4">
+                                    <div data-value="{!item.Id}" onclick="{!c.projectDetail}">
+                                        <h2 style="margin-left: 20px;"><b>Project : </b>{!item.Name}</h2>
+                                        <lightning:formattedRichText value="{!item.Logo__c}" class="projectpic" />
+                                    </div>
+                                </div>
+                                <div style="margin-top:20px;" class="slds-col slds-size_1-of-4">
+                                    <p><b>Account : </b>{!item.Account__r.Name}</p>
+                                    <p><b>Deadline : </b>{!item.Deadline__c}</p>
+                                    <p><b>Kickoff :</b>{!item.Kickoff__c}</p>
+                                    <p><b>Project Owner : </b>{!item.Project_Owner__c}</p>
+                                    <p><b>Project Team :</b>{!item.Project_Team__r.Name}</p>
+                                    <p><b>Project Status :</b>{!item.Status__c}</p>
+                                    <p><b>Project Milestones :</b>{!item.No_of_Milestone__c}</p>
+                                </div> 
+                                <div style="margin-top:20px;" class="slds-col slds-size_1-of-4">
+                                    <p><b>Account : </b>{!item.Account__r.Name}</p>
+                                    <p><b>Deadline : </b>{!item.Deadline__c}</p>
+                                    <p><b>Kickoff :</b>{!item.Kickoff__c}</p>
+                                    <p><b>Project Owner : </b>{!item.Project_Owner__c}</p>
+                                    <p><b>Project Team :</b>{!item.Project_Team__r.Name}</p>
+                                    <p><b>Project Status :</b>{!item.Status__c}</p>
+                                    <p><b>Project Milestones :</b>{!item.No_of_Milestone__c}</p>
+                                </div> 
+                                <div style="margin-top:30px;" class="slds-col slds-size_1-of-4">
+                                    <div class="relatedButton" > 
+                                        <lightning:button variant="Brand"  label="Milestone" value="{!item.Id}" onclick="{!c.buttonDetail}"  />
+                                    </div>
+                                    <div class="relatedButton"> 
+                                        <lightning:button variant="Brand"  label="MOM" value="{!item.Id}" onclick="{!c.buttonDetail}"  />
+                                    </div>
+                                    <div class="relatedButton"> 
+                                        <lightning:button variant="Brand"  label="TaskList" value="{!item.Id}" onclick="{!c.buttonDetail}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </lightning:card>
+                    </div>
+                </aura:iteration>
+            </div>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.loginFormVisible}">
+            <div class="Loginsearch">
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <!-- Modal/Popup Box Header Starts here-->
+                        <header class="slds-modal__header">
+                            <h2 id="modal-heading-01" class="slds-text-heading_large slds-hyphenate"><b>LOGIN HERE</b></h2>
+                        </header>
+                        <!--Modal/Popup Box Body Starts here-->
+                        <div class="slds-modal__content">
+                            <br></br>
+                            <lightning:input label="Username" name="username" value="{!v.Username}" required="true" />
+                            <lightning:input label="Password:" type="password" name="password"  value="{!v.Password}" required="true"/>
+                            <lightning:button variant="neutral" label="Login" onclick="{!c.userLogin}" />
+                            <lightning:button onclick="{! c.closeModel }" variant="neutral"  label="Cancel"  title="Cancel" />
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </aura:if>
+    </div>
+</aura:component>

@@ -1,0 +1,179 @@
+<aura:component controller="projectDetails" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global">
+    <aura:attribute name="whichProject" type="String" />
+    <aura:attribute name="whichObject" type="String" />
+    <aura:attribute name="teamMemberId" type="String"/>
+    <aura:attribute name="tabname" type="String" />
+    
+    <aura:attribute name="newRecord" type="SObject" />
+    <aura:attribute name="assignRecord" type="String" />
+     <aura:attribute name="assignRecordId" type="String" />
+    <aura:attribute name="TeamNameid" type="String" />
+    
+    <aura:attribute name="filteredTeams" type="Team__c[]"/>
+    <aura:attribute name="teams" type="Team__c[]"/>
+    <aura:attribute name="taskDetails" type="SObject[]"/>
+    <aura:attribute name="selectedTab" type="String" default="SearchAll"/>
+    
+    <aura:attribute name="searchText" type="string" default=""/>    
+    <aura:attribute name="searchTeam" type="string" default=""/> 
+    
+        <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <lightning:card class="slds-max-small slds-box-border" title="{!v.whichObject + INFO}" >
+        <aura:set attribute="actions">
+            <lightning:buttonIcon iconName="utility:arrow_left" onclick="{!c.goBack}" variant="border-filled" alternativeText="goBack"/>
+        </aura:set>
+        <lightning:card class="search">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col" style="border-right: 2px solid white;">
+                    <lightning:input class="input" value="{!v.searchText}" onchange="{!c.searchText}" placeholder="Search Record from any tab" type="search"/>
+                    <lightning:input class="input" value="{!v.newRecord}" aura:id="newRecord" placeholder="create new Record" type="text"/>
+                    <lightning:button label="Bulk Create" title="Bulk Create" onclick="{!c.openBulkRecordCreator}"/>
+                    <lightning:button label="1 Create" title="1 Create" onclick="{!c.newRecord}"/>
+                </div>
+                <aura:if isTrue="{!v.whichObject == 'TaskList'}">
+                    <div class="slds-col">
+                        <lightning:input class="input" value="{!v.assignRecord}" aura:id="assignRecord" placeholder="Assign This" type="text"/>
+                        <lightning:input class="input" value="{!v.searchTeam}" onchange="{!c.searchTeam}" placeholder="Search Team Member" type="search"/>
+                        <aura:iteration items="{!v.filteredTeams}" var="item" indexVar="index">
+                            <li role="presentation">
+                                <a role="option" style="font-size:14px;color:white;border-radius:25px;margin:2px;" data-name="{!item.Name}" data-id="{!item.Id}" onclick="{!c.update}">
+                                    <lightning:icon iconName="utility:people" size="xx-small"/>
+                                    <b style="margin-left:3px;">{!item.Name}</b>
+                                </a>
+                            </li>
+                        </aura:iteration>
+                        <lightning:button label="Assign" title="Assign" onclick="{!c.Assign}"/>
+                    </div>
+                </aura:if>
+            </div>
+        </lightning:card>
+        
+        <aura:if isTrue="{!v.whichObject == 'TaskList'}">
+            <div class="slds-card">
+                <div class="slds-card__body slds-grid">
+                    <div class="slds-tabs-container slds-size_1-of-5">
+                        <div class="slds-tabs_default" style="height:100%; overflow-y: auto;">
+                            <div class="slds-tabs_default">
+                                <div class="slds-tabs_default__item" data-value="SearchAll" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Search</a>
+                                </div>
+                                <div class="slds-tabs_default__item " data-value="Planned" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Planned</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="In Progress" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">In Progress</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Paused" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Paused</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Completed &amp; 1st Testing Done" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Completed &amp; 1st Testing Done</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Verified By Manager" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Verified By Manager</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Informed to Client" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Informed to Client</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Got Confirmation from Client" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Got Confirmation from Client</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Issue Reported by Client" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Issue Reported by Client</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Not Applicable" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Not Applicable</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Completed But Confirmation Not Required" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Completed But Confirmation Not Required</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Not Possible &amp; Informed to Client" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Not Possible &amp; Informed to Client</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Input Needed" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Input Needed</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-border_left slds-p-around_medium slds-size_4-of-5">
+                        <div>
+                            <aura:iteration items="{!v.taskDetails}" var="item">
+                                <div class="task-tube" data-value="{!item.Id}" data-name="{!item.Name}" onclick="{!c.taskDetail}">
+                                    {!item.Name}
+                                </div>
+                            </aura:iteration>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!v.whichObject == 'Milestone'}">
+            <div class="slds-card">
+                <div class="slds-card__body slds-grid">
+                    <div class="slds-tabs-container slds-size_1-of-5">
+                        <div class="slds-tabs_default" style="height:100%; overflow-y: auto;">
+                            <div class="slds-tabs_default">
+                                <div class="slds-tabs_default__item" data-value="SearchAll" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Search</a>
+                                </div>
+                                <div class="slds-tabs_default__item " data-value="Planned" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Planned</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="In Progress" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">In Progress</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Completed" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Completed</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-border_left slds-p-around_medium slds-size_4-of-5">
+                        <div>
+                            <aura:iteration items="{!v.taskDetails}" var="item">
+                                <div class="task-tube" data-value="{!item.Id}" data-name="{!item.Name}" onclick="{!c.taskDetail}">
+                                    {!item.Name}
+                                </div>
+                            </aura:iteration>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!v.whichObject == 'MOM'}">
+            <div class="slds-card">
+                <div class="slds-card__body slds-grid">
+                    <div class="slds-tabs-container slds-size_1-of-5">
+                        <div class="slds-tabs_default" style="height:100%; overflow-y: auto;">
+                            <div class="slds-tabs_default">
+                                <div class="slds-tabs_default__item" data-value="SearchAll" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Search</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="In Progress" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">In Progress</a>
+                                </div>
+                                <div class="slds-tabs_default__item" data-value="Completed" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Completed</a>
+                                </div>
+                                <div class="slds-tabs_default__item " data-value="Not Applicable" onclick="{!c.handleTabClick}" aura:id="tabItem">
+                                    <a class="slds-tabs_default__link">Not Applicable</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-border_left slds-p-around_medium slds-size_4-of-5">
+                        <div>
+                            <aura:iteration items="{!v.taskDetails}" var="item">
+                                <div class="task-tube" data-value="{!item.Id}" data-name="{!item.Name}" onclick="{!c.taskDetail}">
+                                    {!item.Name}
+                                </div>
+                            </aura:iteration>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+    </lightning:card>
+</aura:component>

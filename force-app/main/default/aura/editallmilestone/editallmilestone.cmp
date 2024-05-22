@@ -1,0 +1,162 @@
+<aura:component  controller="editallmilestone" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutheader" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:attribute name="piliList" type="Milestone__c[]" />
+    <aura:attribute name="proinv" type="Project1__c" />
+   
+    
+    <aura:html tag="style">
+        .slds-modal__container{
+        height : 100%;
+        width: 100%;
+        max-width: 180rem;
+        }
+        .modal-body{
+        height : 400px !important;
+        max-height: 550px !important;
+        }
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:0rem !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+        html{
+        background-color: white;
+        
+        }
+    </aura:html>
+    
+    <!-- Header -->    
+    <div class="slds-modal__header"> 
+        <h1 class="slds-page-header__title"></h1>
+    </div> 
+    
+    
+    <div class="mod slds-scrollable_x"  style="min_height:100Px;">
+        
+        <div class="slds-page-header" style="text-align:center;background-color:#2E86C1;color:white;">
+            <h1 class="slds-page-header__title">Edit All Milestone</h1>
+        </div>
+        
+        <div class="slds-table--header-fixed_container">
+            <div class="slds-scrollable_x" style="min_height:100Px;width:100%; margin: 1%;">
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer" style="width:100%;font-size:12px;overflow:scroll;" cellpadding="0">
+                    <lightning:recordEditForm objectApiName="Milestone__c" >
+                        <thead>
+                            <tr class="slds-text-title_caps" style="min-height: 35px;">
+                                <th scope="col" style="width:3%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">NO</div>
+                                </th>
+                                
+                                <th scope="col" style="width:12%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">MILESTONE NAME</div>
+                                </th>
+                                
+                                <th scope="col" style="width:15%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">PROJECT</div>
+                                </th>
+                                
+                                <th scope="col" style="width:10%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">MS ORDER</div>
+                                </th>
+                                
+                                
+                                
+                                <th scope="col" style="width:10%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">CONTACT</div>
+                                </th>
+                                
+                                <th scope="col" style="width:10%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">KICKOFF</div>
+                                </th>
+                                   <th scope="col" style="width:10%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">DEADLINE</div>
+                                </th>
+                                   <th scope="col" style="width:10%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">ACTUAL START DATE</div>
+                                </th>
+                              <th scope="col" style="width:10%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">ACTUAL END DATE</div>
+                                </th>
+
+                                <th scope="col" style="width:5%;font-size:12px;background-color:#2E86C1;color:white; border: 1px solid #C1C1C1; text-align: center;">
+                                    <div class="slds-truncate">Action</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            
+                            <aura:iteration items="{!v.piliList}" var="sord" indexVar="rowIndex">
+                                <tr class="slds-text-title_caps" style="font-size:12px;">
+                                    
+                                    <td style="border: 1px solid #C1C1C1; text-align: center;">{!rowIndex + 1}</td>
+                                    
+                                 <!--   <td style="border: 1px solid #C1C1C1; text-align: center;">{!sord.Name}</td>-->
+                                    
+                                  <td style="border: 1px solid #C1C1C1;width:1.5%;font-size:12px; text-align: center; font-weight: bold;">
+                                        <lightning:inputField value="{!sord.Name}" fieldName="Name" variant="label-hidden"  />
+                                    </td>
+                                    
+                                   
+                                    <td style="border: 1px solid #C1C1C1;">
+                                        <lightning:inputField fieldName="Project__c" variant="label-hidden" value="{!sord.Project__c}" disabled="true" required="true" />
+                                    </td>
+                                    
+                                     <td style="border: 1px solid #C1C1C1;">
+                                        <lightning:inputField fieldName="Milestone_Order__c" variant="label-hidden" value="{!sord.Milestone_Order__c}"  disabled="true" />
+                                    </td>
+                                    
+                                     <td style="border: 1px solid #C1C1C1;">
+                                        <lightning:inputField fieldName="Contact__c" variant="label-hidden" value="{!sord.Contact__c}"  disabled="true" />
+                                    </td>
+                                    
+                                     <td style="border: 1px solid #C1C1C1;text-align: center;">
+                                        <lightning:inputField fieldName="Kickoff__c" variant="label-hidden" value="{!sord.Kickoff__c}" disabled="false" />
+                                    </td>
+                                    
+                                     <td style="border: 1px solid #C1C1C1;">
+                                        <lightning:inputField fieldName="Deadline__c" variant="label-hidden" value="{!sord.Deadline__c}"  disabled="false" />
+                                    </td>
+                                    
+                                      <td style="border: 1px solid #C1C1C1;">
+                                        <lightning:inputField fieldName="Actual_Start_Date__c" variant="label-hidden" value="{!sord.Actual_Start_Date__c}"  disabled="false" />
+                                    </td>
+                                    
+                                      <td style="border: 1px solid #C1C1C1;">
+                                        <lightning:inputField fieldName="Actual_End_Date__c" variant="label-hidden" value="{!sord.Actual_End_Date__c}"  disabled="false" />
+                                    </td>
+             
+                                    <td style="border: 1px solid #C1C1C1; text-align: center;">
+                                        <lightning:buttonIcon iconName="utility:delete" 
+                                                              variant="bare" 
+                                                              onclick="{!c.removeDeletedRow}"
+                                                              size="large"
+                                                              class="deletebtn"
+                                                              
+                                                              value="{!rowIndex}"/>
+                                        
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                            
+                        </tbody>
+                    </lightning:recordEditForm>
+                    
+                </table>
+            </div>
+        </div> 
+    </div>
+    <br/>
+    <div class="slds-docked-form-footer" style="text-align:center;background-color:white;">
+        
+        <lightning:button aura:id="button" class="button" label="Save" onclick="{!c.onSave}" variant="brand"/>
+        <!--  <lightning:button aura:id="button" class="button" label="Cancel" onclick="{!c.cancelit}" variant="brand"/>-->
+    </div>
+</aura:component>

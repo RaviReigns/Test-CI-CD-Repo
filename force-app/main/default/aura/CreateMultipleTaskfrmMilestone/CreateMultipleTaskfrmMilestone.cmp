@@ -1,0 +1,171 @@
+<aura:component controller="CreateMultipleTaskfrmMilestone" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionwithoutHeader" access="global" >
+    <aura:attribute name="tasklist" type="Task_List__c[]"/>
+    
+        <aura:attribute name="whichProject" type="String" />
+    <aura:attribute name="whichObject" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:attribute name="numberofpass" type="Integer" default="0"/>
+    <aura:attribute name="showFirstpage" type="boolean" default="true" />
+    <aura:attribute name="blockgo" type="boolean" default="false"/>
+    
+    <aura:html tag="style">
+        .slds-modal__container{
+        height : 100%;
+        width: 100%;
+        max-width: 180rem;
+        }
+        .modal-body{
+        height : 400px !important;
+        max-height: 550px !important;
+        }
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:0rem !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+        html{
+        background-color: white;
+        }
+    </aura:html>
+    
+    <div class="heading">Create Task List</div>
+    <div class="slds-table--header-fixed_container">
+        <div class="slds-grid slds-wrap" style="margin-left:25%;margin-right:10px;">
+            <div style="font-weight: bold; font-size: 16px; margin: 15px 10px 5px 180px">Number of Task:</div>
+            
+            <div style="width: 100px; margin-top: 10px;margin-bottom: 10px">
+                <lightning:input   class="myCustomClass" type="Integer" variant="label-hidden" value="{!v.numberofpass}"/>
+            </div>
+            <div style="margin-top: 10px; margin-right: 20px;margin-left:15px;margin-bottom: 10px">
+                <lightning:button label="Go" variant="brand" disabled="{!v.blockgo}" onclick="{!c.addfiverows}"/>
+                
+            </div>
+            <div style="margin-top: 10px;margin-bottom: 10px">
+                <lightning:buttonIcon iconName="utility:add" variant="brand" onclick="{!c.add}" />
+                
+            </div>
+        </div>
+        <div class="slds-scrollable" style="min-height:100px;width:100%">
+            
+            <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-scrollable" style="table-layout:fixed;width:100%;font-size:12px;overflow:scroll;" cellpadding="0">
+                
+                <aura:if isTrue="{!v.showFirstpage==true}">
+                    <lightning:recordEditForm objectApiName="Task_List__c">
+                        <table>
+                            <thead>
+                                
+                            </thead>
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    
+                                    <th scope="col" style="width:3%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                        <div class="slds-truncate">S.No.</div>
+                                    </th>
+                                    
+                                    <th scope="col" style="border:0.5px solid #dddddd;width:18%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                        <div class="slds-truncate" title="Task Name">Task Name</div>
+                                    </th>
+                                    
+                                    <th scope="col" style="border:0.5px solid #dddddd;width:35%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                        <div class="slds-truncate" title="Task Description">Task Description</div>
+                                    </th>
+                                    <th scope="col" style="border:0.5px solid #dddddd;width:8%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                        <div class="slds-truncate" title="Task Description">Estimate(Min)</div>
+                                    </th>
+                                    <th scope="col" style="border:0.5px solid #dddddd;width:10%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                        <div class="slds-truncate" title="Task Description">Status</div>
+                                    </th>
+                                    
+                                    <th scope="col" style="border:0.5px solid #dddddd;width:10%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                        <div class="slds-truncate" title="Task Description">Assigned By</div>
+                                    </th>
+                                    
+                                    <th scope="col" style="border:0.5px solid #dddddd;width:10%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                        <div class="slds-truncate" title="Task Description">In Scope</div>
+                                    </th>
+                                    
+                                    <th scope="col" style="border:0.5px solid #dddddd;width:4%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                        <div class="slds-truncate" title="Delete">&nbsp;&nbsp;Action</div>
+                                    </th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration items="{!v.tasklist}" var="i" indexVar="rowIndex">
+                                    
+                                    <tr class="" style="height:10px;font-size:12px;text-align:center;">
+                                        
+                                        <td style="border:0.5px solid #dddddd;font-size:12px;"> 
+                                            &nbsp;&nbsp; {!rowIndex + 1}
+                                        </td>
+                                        <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                            
+                                            <lightning:inputField fieldName="Name" value="{!i.Name}"  variant="label-hidden"/>
+                                            
+                                        </td>
+                                        
+                                        <td style="border:0.5px solid #dddddd;font-size:12px;text-align:left;">
+                                            <lightning:inputField fieldName="Description__c" value="{!i.Description__c}"  variant="label-hidden"/>
+                                            <!-- <lightning:input type="String" value="{!i.Description__c}" variant="label-hidden" disabled="false"/> -->
+                                            
+                                        </td>
+                                        <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                            
+                                            <lightning:inputField fieldName="Estimated_Hours__c" value="{!i.Estimated_Hours__c}"  variant="label-hidden"/>
+                                            
+                                        </td>
+                                        <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                            
+                                            <lightning:inputField fieldName="Status__c" value="{!i.Status__c}"  disabled="false" variant="label-hidden"/>
+                                            
+                                        </td>
+                                        
+                                        <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                            
+                                            <lightning:inputField fieldName="Assigned_By__c" value="{!i.Assigned_By__c}"  disabled="false" variant="label-hidden"/>
+                                            
+                                        </td>
+                                        
+                                        <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                            
+                                            <lightning:inputField fieldName="In_Scope__c" value="{!i.In_Scope__c}"  disabled="false" variant="label-hidden"/>
+                                            
+                                        </td>
+                                        
+                                        <td class="table-tbody-td" style="width:1%;padding: 2px 5px;text-align:center;">
+                                            <lightning:buttonIcon iconName="utility:delete" 
+                                                                  alternativeText="Delete" 
+                                                                  title="Delete Item"
+                                                                  variant="bare" 
+                                                                  size="large"
+                                                                  class="delete-button"
+                                                                  onclick="{!c.deleteit}"
+                                                                  value="{!rowIndex}"
+                                                                  />
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                                
+                            </tbody>
+                        </table>
+                        
+                    </lightning:recordEditForm>
+                    
+                    <div class="slds-docked-form-footer" style="text-align:center;background-color:white;">
+                        <lightning:button aura:id="disablebutton" class="button" label="Save" onclick="{!c.saveIt}" variant="brand"/>
+                        <lightning:button aura:id="button" class="button" label="Cancel" onclick="{!c.cancelit}" variant="neutral"/>
+                    </div> 
+                    
+                </aura:if>
+                
+            </table>
+        </div>
+    </div>
+</aura:component>

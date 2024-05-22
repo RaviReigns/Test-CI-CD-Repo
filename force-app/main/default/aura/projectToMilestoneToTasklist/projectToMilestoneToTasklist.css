@@ -1,0 +1,36 @@
+.THIS {
+}
+
+.THIS .heading {
+    font-size: 18px;
+    background-color: #2E86C1;
+    color:white;
+    text-align: center;
+    margin: 5px 10px 5px 10px;
+    border: none;
+    border-radius: 5px;
+    height: 35px;
+    padding-left: 10px;
+    padding-top:5px;
+} 
+
+.THIS .tableRow {
+    transition : all 0.5s ease;
+}
+
+.THIS .tableRow:hover {
+    font-size: 14px;
+    background-color: #F3F2F2;
+}
+
+.THIS .tableData{
+    border:0.5px solid #c1c1c1;
+}
+
+.THIS .deletebtn {
+    color: darkred;
+}
+.THIS .iconwidth{
+    width:55px;
+    
+}

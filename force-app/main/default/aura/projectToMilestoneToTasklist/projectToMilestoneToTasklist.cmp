@@ -1,0 +1,265 @@
+<aura:component controller="projectToMilestoneToTasklist" implements="force:appHostable,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    
+    <aura:attribute name="tasklist" type="Task_List__c[]" />
+    <aura:attribute name="MilestoneName" type="String"/>
+    <aura:attribute name="MilestoneDes" type="String"/>
+    <aura:attribute name="filter1" type="String" default=""/>
+    <aura:attribute name="filter2" type="String" default=""/>
+    <aura:attribute name="productlist" type="Project1__c[]" />   
+    <aura:attribute name="cproject" type="Project1__c[]"/>
+    <aura:attribute name="selectedProjects" type="Project1__c[]"/>
+    <aura:attribute name="next" type="boolean" default="false"/>
+    <aura:attribute name="numberofpass" type="Integer" default="0"/>
+    <aura:attribute name="showFirstpage" type="boolean" default="true" />
+    <aura:attribute name="blockgo" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doinit}"/>   
+    <aura:html tag="style">
+        .slds-modal__container{
+        height : 100%;
+        width: 100%;
+        max-width: 180rem;
+        
+        }
+        .modal-body{
+        height : 400px !important;
+        max-height: 550px !important;
+        }
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:0rem !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+        html{
+        background-color: white;
+        }
+    </aura:html>
+    
+    
+    <!-- Header -->    
+    <!-- <div class="slds-modal__header"> 
+       <h1 class="slds-page-header__title">Create Opportunity</h1>
+     </div>--> 
+    <!--   <div class="slds-page-header" style="text-align:center;background-color:#2E86C1;color:white;">
+        <h1 class="slds-page-header_title">Create Sales Order</h1>
+    </div>-->
+    
+    <aura:if isTrue="{!v.next==false}">
+        
+        <div class="slds-modal__content slds-p-around_medium">
+            
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12" largeDeviceSize="2" padding="horizontal-medium">
+                    <h3 style="text-align:right;padding-top:23px;">Search</h3>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="12" largeDeviceSize="3" padding="horizontal-medium">
+                    <lightning:input 
+                                     type="search" 
+                                     placeholder="Search Projects"
+                                     value="{!v.filter2}"
+                                     style="color: blue; text-align: center"
+                                     />
+                    
+                </lightning:layoutItem>   
+                <lightning:layoutItem size="12" largeDeviceSize="2" padding="horizontal-medium">
+                     <div style="padding-top:20px;padding-left:20px;">
+                    <lightning:buttonIcon class="iconwidth" iconName="utility:search" variant="brand" alternativeText="Search"  onclick="{!c.searchproduct}"/> 
+                    </div>
+                </lightning:layoutItem>  
+                
+                <lightning:layoutItem size="12" largeDeviceSize="2" padding="horizontal-medium">
+                    <div style="padding-top:20px;padding-left:20px;">
+                        <button class="slds-button slds-button_neutral" onclick="{!c.addmore}">Add More</button>
+                        <button class="slds-button slds-button_brand" onclick="{!c.gonext}">Next</button>
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+            
+            <!-- Show All Product -->
+            <div style="margin: 10px 20px 10px 20px;" >
+                <table>
+                    <thead>
+                        <tr style="width: 100%; background-color: #2E86C1; color: white; height: 35px;">
+                            <th style="width:5%; border: 0.5px solid #f3f2f3; text-align: center">Select</th>
+                            <th style="width:25%; border: 0.5px solid #f3f2f3; padding-left: 5px; text-align: center">Project Name</th>
+                            <th style="width:10%; border: 0.5px solid #f3f2f3; text-align: center">Status</th>
+                            <th style="width:10%; border: 0.5px solid #f3f2f3; text-align: center"> Account</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.cproject}" var="item" indexVar="row">
+                            <tr class="tableRow" style="height: 40px; color: #2E86C1">
+                                <td class="tableData" style="padding-left: 5%;border: 1px solid #C1C1C1;">
+                                    <ui:inputCheckbox value="{!item.isChecked}"/>
+                                </td>
+                                <td class="tableData" style="padding-left: 5px;border: 1px solid #C1C1C1; font-weight: bold;text-align:center">
+                                    
+                                    {!item.Name}
+                                </td>
+                                <td class="tableData" style="text-align: center;border: 1px solid #C1C1C1;">{!item.Status__c}</td>
+                                <td class="tableData" style="text-align: center;border: 1px solid #C1C1C1;">{!item.Account__r.Name}</td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="slds-modal__footer" style="text-align: center">
+            <div class="slds-docked-form-footer">
+                <!-- <button class="slds-button slds-button_neutral" onclick="{!c.cancelit}">Cancel</button>-->
+                <button class="slds-button slds-button_neutral" onclick="{!c.addmore}">Add More</button>
+                <button class="slds-button slds-button_brand" onclick="{!c.gonext}">Next</button>
+            </div>
+        </div>
+        <!-- next page -->
+        <aura:set attribute="else">
+            <h1 class="slds-page-header__title" style="width:100%;font-size:18px;text-align:center;background-color:#2E86C1;color:white;height:30px">Create New Milestone</h1>
+            <div class="slds-table--header-fixed_container">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-m-horizontal_xx-large">
+                        <lightning:input required="true" name="Milestone" label ="Milestone" aura:id="MilestoneName" placeholder="Milestone name..." />
+                        <!-- value="{!v.MilestoneName }" value="{!v.MilestoneDes}" -->
+                    </div>
+                    <div class="slds-col slds-m-horizontal_xx-large">
+                        <lightning:input required="true" name="Description" label="Description" aura:id="MilestoneDes" placeholder="Milestone Description..." />
+                    </div>
+                    
+                </div>
+                <div class="slds-grid slds-wrap" style="margin-left:25%;margin-right:10px;">
+                    
+                    <div style="font-weight: bold; font-size: 16px; margin: 15px 10px 5px 180px">Number of Task:</div>
+                    
+                    <div style="width: 100px; margin-top: 10px;margin-bottom: 10px">
+                        <lightning:input   class="myCustomClass" type="Integer" variant="label-hidden" value="{!v.numberofpass}"/>
+                    </div>
+                    <div style="margin-top: 10px; margin-right: 20px;margin-left:15px;margin-bottom: 10px">
+                        <lightning:button label="Go" variant="brand" disabled="{!v.blockgo}" onclick="{!c.addfiverows}"/>
+                        
+                    </div>
+                    <div style="margin-top: 10px;margin-bottom: 10px">
+                        <lightning:buttonIcon iconName="utility:add" variant="brand" onclick="{!c.add}" />
+                        
+                    </div>
+                </div>
+                <div class="slds-scrollable" style="min-height:100px;width:100%">
+                    
+                    <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-scrollable" style="table-layout:fixed;width:100%;font-size:12px;overflow:scroll;" cellpadding="0">
+                        <lightning:recordEditForm objectApiName="Task_List__c">
+                            <table>
+                                <thead>
+                                    
+                                </thead>
+                                <thead>
+                                    <tr class="slds-text-title_caps">
+                                        
+                                        <th scope="col" style="width:3%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                            <div class="slds-truncate">S.No.</div>
+                                        </th>
+                                        
+                                        <th scope="col" style="border:0.5px solid #dddddd;width:18%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                            <div class="slds-truncate" title="Task Name">Task Name</div>
+                                        </th>
+                                        
+                                        <th scope="col" style="border:0.5px solid #dddddd;width:35%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                            <div class="slds-truncate" title="Task Description">Task Description</div>
+                                        </th>
+                                        <th scope="col" style="border:0.5px solid #dddddd;width:8%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                            <div class="slds-truncate" title="Task Description">Estimate(Min)</div>
+                                        </th>
+                                        <th scope="col" style="border:0.5px solid #dddddd;width:10%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                            <div class="slds-truncate" title="Task Description">Status</div>
+                                        </th>
+                                        
+                                        <th scope="col" style="border:0.5px solid #dddddd;width:10%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                            <div class="slds-truncate" title="Task Description">Assigned By</div>
+                                        </th>
+                                        
+                                        <th scope="col" style="border:0.5px solid #dddddd;width:10%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                            <div class="slds-truncate" title="Task Description">In Scope</div>
+                                        </th>
+                                        
+                                        <th scope="col" style="border:0.5px solid #dddddd;width:4%;font-size:12px;background-color:#2E86C1;color:white;text-align:center;">
+                                            <div class="slds-truncate" title="Delete">&nbsp;&nbsp;Action</div>
+                                        </th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <aura:iteration items="{!v.tasklist}" var="i" indexVar="rowIndex">
+                                        
+                                        <tr class="" style="height:10px;font-size:12px;text-align:center;">
+                                            
+                                            <td style="border:0.5px solid #dddddd;font-size:12px;"> 
+                                                &nbsp;&nbsp; {!rowIndex + 1}
+                                            </td>
+                                            <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                                
+                                                <lightning:inputField fieldName="Name" value="{!i.Name}"  variant="label-hidden"/>
+                                                
+                                            </td>
+                                            
+                                            <td style="border:0.5px solid #dddddd;font-size:12px;text-align:left;">
+                                                <lightning:inputField fieldName="Description__c" value="{!i.Description__c}"  variant="label-hidden"/>
+                                                <!-- <lightning:input type="String" value="{!i.Description__c}" variant="label-hidden" disabled="false"/> -->
+                                                
+                                            </td>
+                                            <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                                
+                                                <lightning:inputField fieldName="Estimated_Hours__c" value="{!i.Estimated_Hours__c}"  variant="label-hidden"/>
+                                                
+                                            </td>
+                                            <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                                
+                                                <lightning:inputField fieldName="Status__c" value="{!i.Status__c}"  disabled="false" variant="label-hidden"/>
+                                                
+                                            </td>
+                                            
+                                            <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                                
+                                                <lightning:inputField fieldName="Assigned_By__c" value="{!i.Assigned_By__c}"  disabled="false" variant="label-hidden"/>
+                                                
+                                            </td>
+                                            
+                                            <td style="border:0.5px solid #dddddd;font-size:12px;text-align:center;">
+                                                
+                                                <lightning:inputField fieldName="In_Scope__c" value="{!i.In_Scope__c}"  disabled="false" variant="label-hidden"/>
+                                                
+                                            </td>
+                                            
+                                            <td class="table-tbody-td" style="width:1%;padding: 2px 5px;text-align:center;">
+                                                <lightning:buttonIcon iconName="utility:delete" 
+                                                                      alternativeText="Delete" 
+                                                                      title="Delete Item"
+                                                                      variant="bare" 
+                                                                      size="large"
+                                                                      class="delete-button"
+                                                                      onclick="{!c.deleteit}"
+                                                                      value="{!rowIndex}"
+                                                                      />
+                                            </td>
+                                        </tr>
+                                    </aura:iteration>
+                                    
+                                </tbody>
+                            </table>
+                            
+                        </lightning:recordEditForm>
+                        
+                        <div class="slds-docked-form-footer" style="text-align:center;background-color:white;">
+                            <lightning:button aura:id="disablebutton" class="button" label="Save" onclick="{!c.saveIt}" variant="brand"/>
+                            <lightning:button aura:id="button" class="button" label="Cancel" onclick="{!c.cancelit}" variant="neutral"/>
+                        </div> 
+                    </table>
+                </div>
+            </div>
+        </aura:set>
+    </aura:if>
+</aura:component>
