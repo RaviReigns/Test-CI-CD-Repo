@@ -10,6 +10,7 @@ public class CalenderClass {
         return subjectValues;
     }
     
+    // getting all events fromm the metadata event 
     @AuraEnabled
     public static list<Event> getAllEvents(){
         list<Event> eventlist =[Select id, EndDateTime,StartDateTime,Subject from Event where createdById=:Userinfo.getUserId()] ;
